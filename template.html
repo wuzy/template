@@ -1,0 +1,133 @@
+程序流程三种基本结构：顺序-分支-循环
+
+1.Mustache.js
+无逻辑/轻逻辑：只有标记，这些标记替换一个值，一系列值，或者什么都没有。没有流程控制语句，例如if/else， for循环。
+名称由来：因为标记'{'像胡子
+Tag Types
+(1)variables: '{{}}'是最基本的标记，例如{{name}}Mustache将在当前的上下文中查找key为name的变量.如果不存在name的key，则不渲染
+
+(2){{{name}}}: 不转义变量。默认所有的html都会被转义
+在修改默认分隔符'{'时，也可以使用{{& name}}来避免转义
+
+Sections
+根据变量在当前上下文中的值渲染一次或多次
+以pound开始，slash结束。
+{{#person}}
+{{/person}}
+
+(1)false或空对象([], null) => 相当于if/else
+Template:
+	Shown.
+	{{#nothin}}
+	  Never shown!
+	{{/nothin}}
+Hash:
+    {person: true}
+Output:
+    Shown.
+
+(2)non-Empty lists: 当前循环的item是sections内部的块的上下文 => 相当于for loop
+Template:
+	{{#repo}}
+	    <b>{{name}}</b>
+	{{/repo}}
+
+Hash:
+	{
+		repo: [
+	        {name: 'resque'},
+	        {name: 'hub'}
+		]
+	}
+
+Output:
+	<b>resque</b>
+	<b>hub</b>
+
+(3)Lambdas: 当值为函数或者lambdas表达式时，函数将会被执行，参数为块内未被解析的文本。用于过滤和缓存。
+Tempalte:
+	{{#wrapped}}
+	    {{name}} is awesome.
+	{{/wrapped}}
+
+Hash:
+	{
+		name: 'Willy',
+		wrapped: function() {
+		    return function(text, render) {
+		        return '<b>' + render(text) + '</b>';
+		    }
+	    }
+	}
+
+Output:
+    <b>Willy is awesome.</b>
+
+=> (function() {
+	    return function(text, render) {
+	        return '<b>' + render(text) + '</b>';
+	    }
+   }).call({
+		name: 'Willy',
+		wrapped: function() {
+		    return function(text, render) {
+		        return '<b>' + render(text) + '</b>';
+		    }
+	    }
+	})
+
+(4)Inverted Sections: key不存在，或为false，empty list
+{{^person}}
+    something
+{{/person}}
+
+(5)Comments: 注释
+{{! comments}}
+Template:
+    <h1>Today{{! ignore me}}.</h1>
+
+Output:
+    <h1>Today.</h1>
+
+(6)Partials: 外部模板 
+{{> box}}
+Template:
+    base.mustache:
+        <h2>Names</h2>
+        {{#names}}
+            {{> user}}
+        {{/names}}
+
+    user.mustache:
+        <strong>{{name}}</strong>
+
+expended template:
+    <h2>Names</h2>
+    {{#names}}
+        <strong>{{name}}</strong>
+    {{/names}}
+
+var template = "<h1>{{firstName}} {{lastName}}</h1>{{>address}}";
+var partials = {address: "<p>{{address}}</p>{{city}}, {{state}} {{zip}}"};
+var html = Mustache.to_html(template, data, partials);
+
+(7)Set Delimiter: 自定义标签不能拥有空格和等号
+{{ and }}
+
+* {{default_tags}}
+{{=<% %>=}}
+* <% erb_style_tags %>
+<%={{ }}=%>
+*{{default_tags_again}}
+
+
+
+
+
+参考:
+http://mustache.github.io/
+https://github.com/janl/mustache.js
+http://coenraets.org/blog/2011/12/tutorial-html-templates-with-mustache-js/
+http://nuysoft.com/bak/templating.html
+
+

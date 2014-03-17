@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="thin.js"></script>
+        <script src="Mustache.js"></script>
+    <head>
+    <body>
+        <div vm-model="test.Person">
+            <input type="text" vm-value="name"/>
+            <input type="text" vm-value="age"/>
+            <input type="button" vm-click="grouwUp" value="Grow Up" />
+        </div>
+    	<script>
+         thin.define("test.Person", [], function () {
+            function Person() {
+                this.name = "Tom";
+                this.age = 5;
+            }
+
+            Person.prototype = {
+                init: function () {
+                    this.name = "Jerry";
+                    this.age = 3;
+                },
+
+                growUp: function () {
+                    this.age++;
+                }
+            };
+
+            return Person;
+        });
+
+        var tpl = [
+           '{{#wrapped}}',
+           '   {{name}} is awesome.',
+           '{{/wrapped}}'
+        ].join('');
+
+        var hash = {
+            name: 'Willy',
+            wrapped: function() {
+                return function(text, render) {
+                    return '<b>' + render(text) + '</b>';
+                }
+            }
+        } 
+
+        console.log(Mustache.render(tpl, hash));
+
+var data = {age: {}, tt: null, bb: []};
+var tpl = "{{#age}} skills:{{/age}}{{#tt}}ad{{/tt}}{{#bb}}bb{{/bb}}</ul>";
+var html = Mustache.to_html(tpl, data);
+
+    	</script>
+    </body>
+</html>
