@@ -46,12 +46,15 @@
             }
         } 
 
-        console.log(Mustache.render(tpl, hash));
+        //console.log(Mustache.render(tpl, hash));
 
-var data = {age: {}, tt: null, bb: []};
-var tpl = "{{#age}} skills:{{/age}}{{#tt}}ad{{/tt}}{{#bb}}bb{{/bb}}</ul>";
-var html = Mustache.to_html(tpl, data);
+       /// console.log(Mustache.render('{{#person}}<div>{{name}}</div>{{/person}}', {person: [{name: 'yongba'}]}))
 
+var tpl = '<h2>Names</h2>{{#names}}{{> user}}{{/names}}';
+var user = '<strong>{{name}}</strong>'
+var data = {names:[{name:1}]}
+        
+var html = Mustache.to_html(tpl, data, user);
     	</script>
     </body>
 </html>
